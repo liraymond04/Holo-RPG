@@ -1,6 +1,26 @@
-#include "GameState/MainMenu.h"
+#include "Game.h"
+#include "GameState/MainMenu/MainScene.h"
+#include "GameState/MainMenu/OptionsScene.h"
 
-bool MainMenu::HandleEvents() {
+void MainScene::Init(Game* g, GameState* s) {
+    game = g; state = s;
+    vOptionsOffset.y = game->ScreenHeight() / 2 - (vOptions.size() / 2) * 10;
+    cout << sSceneName << " scene initialized" << "\n";
+}
+
+void MainScene::Cleanup() {
+    cout << sSceneName << " scene cleanup" << "\n";
+}
+
+void MainScene::Pause() {
+    cout << sSceneName << " scene paused" << "\n";
+}
+
+void MainScene::Resume() {
+    cout << sSceneName << " scene resumed" << "\n";
+}
+
+bool MainScene::HandleEvents() {
     if (game->GetKey(olc::F).bPressed) {
         cout << "F key pressed" << "\n";
     }
@@ -19,6 +39,7 @@ bool MainMenu::HandleEvents() {
                 break;
             case 1: // Options
                 cout << "Options selected" << "\n";
+                state->PushScene(new OptionsScene);
                 break;
             case 2: // Tutorial
                 cout << "Tutorial selected" << "\n";
@@ -27,7 +48,7 @@ bool MainMenu::HandleEvents() {
                 cout << "Credits selected" << "\n";
                 break;
             case 4: // Quit
-                game->PopState();
+                state->PopScene();
                 break;
         }
     }
@@ -35,13 +56,11 @@ bool MainMenu::HandleEvents() {
     return true;
 }
 
-bool MainMenu::Update() {
+bool MainScene::Update() {
     return true;
 }
 
-bool MainMenu::Draw() {
-    game->Clear(olc::BLACK);
-
+bool MainScene::Draw() {
     for (int i=0; i<vOptions.size(); i++) {
         string sPrefix = i == nOptionSelected ? sOptionsIndicator : "";
         game->DrawString(

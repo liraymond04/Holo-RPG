@@ -3,6 +3,8 @@
 
 #include "GameState.h"
 
+class Scene;
+
 class MainMenu : public GameState {
 protected:
     MainMenu() {}
@@ -11,26 +13,19 @@ private:
     static MainMenu m_MainMenu;
 
     Game* game;
+    vector<Scene*> scenes;
 
     string sStateName = "Main Menu";
-    
-    /* Options */
-    vector<string> vOptions = {
-        "Play",
-        "Options",
-        "Tutorial",
-        "Credits",
-        "Quit"
-    };
-    string sOptionsIndicator = "> ";
-    olc::vi2d vOptionsOffset = {50, 0};
-    int nOptionSpacing = 15;
-    int nOptionSelected = 0;
 
 public:
     /* Core */
     void Init(Game* g);
     void Cleanup();
+
+    /* Scene */
+    void ChangeScene(Scene* scene);
+    void PushScene(Scene* scene);
+    void PopScene();
 
     /* Flow */
     void Pause();
