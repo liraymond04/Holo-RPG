@@ -98,8 +98,8 @@
 
 */
 
-#ifndef OLC_PGEX_SPLASHSCREEN
-#define OLC_PGEX_SPLASHSCREEN
+#ifndef OLC_PGEX_SPLASHSCREEN_H
+#define OLC_PGEX_SPLASHSCREEN_H
 
 class olcPGEX_SplashScreen : public olc::PGEX
 {
