@@ -8,6 +8,7 @@
 using namespace std;
 
 #include "olcPixelGameEngine.h"
+#include "olcPGEX_SplashScreen.h"
 
 class GameState;
 
@@ -18,6 +19,7 @@ public:
     }
 
 private:
+    olcPGEX_SplashScreen splashScreen;
     vector<GameState*> states;
 
 public:

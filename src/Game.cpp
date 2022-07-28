@@ -2,12 +2,14 @@
 #include "GameState/MainMenu.h"
 
 bool Game::OnUserCreate() {
+    splashScreen.SetOptions(2, 1, 2.0f, 0.5f, olc::BLACK, olc::BLUE, olc::DARK_GREY, olc::WHITE);
     ChangeState(MainMenu::Instance());
 
     return true;
 }
 
 bool Game::OnUserUpdate(float fElapsedTime) {
+    if (splashScreen.AnimateSplashScreen(fElapsedTime)) return true;
     return HandleEvents() &&
         Update() && 
         Draw();
