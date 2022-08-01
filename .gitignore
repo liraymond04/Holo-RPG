@@ -1,4 +1,14 @@
-.cache
-.vscode/
 bin/
+
+# nvim LSP
+.cache
 compile_commands.json
+
+# vscode
+.vscode/
+
+# cmake
+CMakeFiles/
+cmake_install.cmake
+CMakeCache.txt
+Makefile
