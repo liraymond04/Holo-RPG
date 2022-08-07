@@ -32,7 +32,7 @@ bool MainScene::HandleEvents() {
         nOptionSelected++;
     }
 
-    if (game->GetKey(olc::ENTER).bPressed) {
+    if (game->GetKey(olc::ENTER).bPressed || game->GetKey(olc::RIGHT).bPressed) {
         switch (nOptionSelected) {
             case 0: // Play
                 cout << "Play selected" << "\n";

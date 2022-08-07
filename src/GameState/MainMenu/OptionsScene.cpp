@@ -35,7 +35,7 @@ bool OptionsScene::HandleEvents() {
     int value;
     switch (nOptionSelected) {
         case 0: // Back
-            if (game->GetKey(olc::ENTER).bPressed) {
+            if (game->GetKey(olc::ENTER).bPressed || game->GetKey(olc::LEFT).bPressed) {
                 state->PopScene();
             }
             break;
