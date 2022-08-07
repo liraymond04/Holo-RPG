@@ -20,6 +20,7 @@ public:
     virtual void ChangeScene(Scene* scene) = 0;
     virtual void PushScene(Scene* scene) = 0;
     virtual void PopScene() = 0;
+    virtual Scene* TopScene() = 0;
 
     virtual void Pause() = 0;
     virtual void Resume() = 0;

@@ -26,6 +26,7 @@ public:
     void ChangeScene(Scene* scene);
     void PushScene(Scene* scene);
     void PopScene();
+    Scene* TopScene();
 
     /* Flow */
     void Pause();

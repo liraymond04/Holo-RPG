@@ -45,6 +45,10 @@ void MainMenu::PopScene() {
     }
 }
 
+Scene* MainMenu::TopScene() {
+    return scenes.back();
+}
+
 void MainMenu::Pause() {
     cout << sStateName << " state paused" << "\n";
 }

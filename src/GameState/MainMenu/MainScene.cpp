@@ -69,5 +69,9 @@ bool MainScene::Draw() {
         );
     }
 
+    if (state->TopScene() == this) {
+        game->DrawRect(vOptionsOffset.x - 10, vOptionsOffset.y - nOptionSpacing / 2, 100, vOptions.size() * nOptionSpacing + nOptionSpacing / 2);    
+    }
+
     return true;
 }
