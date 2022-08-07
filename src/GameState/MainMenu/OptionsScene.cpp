@@ -32,6 +32,7 @@ bool OptionsScene::HandleEvents() {
         nOptionSelected++;
     }
 
+    int value;
     switch (nOptionSelected) {
         case 0: // Back
             if (game->GetKey(olc::ENTER).bPressed) {
@@ -39,27 +40,36 @@ bool OptionsScene::HandleEvents() {
             }
             break;
         case 1: // Master Volume
-            if (game->GetKey(olc::LEFT).bPressed && vecSoundValue[1] > 0) {
-                vecSoundValue[1] -= nValueStep;
+            value = game->config["Master Volume"];
+            if (game->GetKey(olc::LEFT).bPressed && value > 0) {
+                game->config["Master Volume"] = value - nValueStep;
+                game->WriteConfig();
             }
-            if (game->GetKey(olc::RIGHT).bPressed && vecSoundValue[1] < 100) {
-                vecSoundValue[1] += nValueStep;
+            if (game->GetKey(olc::RIGHT).bPressed && value < 100) {
+                game->config["Master Volume"] = value + nValueStep;
+                game->WriteConfig();
             }
             break;
         case 2: // SFX
-            if (game->GetKey(olc::LEFT).bPressed && vecSoundValue[2] > 0) {
-                vecSoundValue[2] -= nValueStep;
+            value = game->config["SFX"];
+            if (game->GetKey(olc::LEFT).bPressed && value > 0) {
+                game->config["SFX"] = value - nValueStep;
+                game->WriteConfig();
             }
-            if (game->GetKey(olc::RIGHT).bPressed && vecSoundValue[2] < 100) {
-                vecSoundValue[2] += nValueStep;
+            if (game->GetKey(olc::RIGHT).bPressed && value < 100) {
+                game->config["SFX"] = value + nValueStep;
+                game->WriteConfig();
             }
             break;
         case 3: // Music
-            if (game->GetKey(olc::LEFT).bPressed && vecSoundValue[3] > 0) {
-                vecSoundValue[3] -= nValueStep;
+            value = game->config["Music"];
+            if (game->GetKey(olc::LEFT).bPressed && value > 0) {
+                game->config["Music"] = value - nValueStep;
+                game->WriteConfig();
             }
-            if (game->GetKey(olc::RIGHT).bPressed && vecSoundValue[3] < 100) {
-                vecSoundValue[3] += nValueStep;
+            if (game->GetKey(olc::RIGHT).bPressed && value < 100) {
+                game->config["Music"] = value + nValueStep;
+                game->WriteConfig();
             }
             break;
     }
@@ -78,8 +88,9 @@ bool OptionsScene::Draw() {
             {vOptionsOffset.x, vOptionsOffset.y + i * nOptionSpacing},
             sPrefix + vOptions[i]
         );
-        if (vecSoundValue[i] != -1) {
-            game->FillRect(vOptionsOffset.x * 2, vOptionsOffset.y + i * nOptionSpacing, fBarWidth * (0.01f * vecSoundValue[i]), 10);
+        if (game->config.contains(vOptions[i])) {
+            int val = game->config[vOptions[i]];
+            game->FillRect(vOptionsOffset.x * 2, vOptionsOffset.y + i * nOptionSpacing, fBarWidth * (0.01f * val), 10);
         }
     }
 

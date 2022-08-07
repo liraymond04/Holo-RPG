@@ -4,8 +4,11 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 using namespace std;
+using json = nlohmann::ordered_json;
 
 #include "olcPixelGameEngine.h"
 #include "olcPGEX_SplashScreen.h"
@@ -17,6 +20,14 @@ public:
     Game() {
         sAppName = "HoloRPG";
     }
+
+    json config = json::parse(R"(
+        {
+            "Master Volume": 50,
+            "SFX": 100,
+            "Music": 100
+        }
+    )");
 
 private:
     olcPGEX_SplashScreen splashScreen;
@@ -38,6 +49,10 @@ public:
     void ChangeState(GameState* state);
 	void PushState(GameState* state);
 	void PopState();
+
+    /* Config */
+    void ReadConfig();
+    void WriteConfig();
 };
 
 #endif

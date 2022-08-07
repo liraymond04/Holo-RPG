@@ -28,9 +28,6 @@ private:
     /* Sound options */
     float fBarWidth = 50;
     int nValueStep = 10;
-    vector<int> vecSoundValue = {
-        -1, 50, 100, 100
-    };
 
 public:
     /* Core */

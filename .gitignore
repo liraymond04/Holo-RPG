@@ -1,4 +1,5 @@
 bin/
+config.json
 
 # nvim LSP
 .cache
