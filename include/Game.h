@@ -10,8 +10,8 @@
 using namespace std;
 using json = nlohmann::ordered_json;
 
-#include "olcPixelGameEngine.h"
-#include "olcPGEX_SplashScreen.h"
+#include "lib/olcPixelGameEngine.h"
+#include "lib/olcPGEX_SplashScreen.h"
 
 class GameState;
 
