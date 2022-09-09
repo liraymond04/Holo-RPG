@@ -7,7 +7,7 @@ int main() {
         game.Start();
         game.Cleanup();
     } else {
-        wcout << L"Could not construct console" << endl;
+        std::wcout << L"Could not construct console" << std::endl;
     }
 
     return 0;

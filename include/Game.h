@@ -7,11 +7,11 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
-using namespace std;
 using json = nlohmann::ordered_json;
 
 #include "lib/olcPixelGameEngine.h"
 #include "lib/olcPGEX_SplashScreen.h"
+#include "lib/miniaudio.h"
 
 class GameState;
 
@@ -29,9 +29,12 @@ public:
         }
     )");
 
+    ma_result audio_result;
+    ma_engine audio_engine;
+
 private:
     olcPGEX_SplashScreen splashScreen;
-    vector<GameState*> states;
+    std::vector<GameState*> states;
 
     /* Core */
     bool OnUserCreate() override;

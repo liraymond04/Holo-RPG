@@ -8,11 +8,11 @@ MainMenu MainMenu::m_MainMenu;
 void MainMenu::Init(Game* g) {
     game = g;
     ChangeScene(new MainScene);
-    cout << sStateName << " state initialized" << "\n";
+    std::cout << sStateName << " state initialized" << "\n";
 }
 
 void MainMenu::Cleanup() {
-    cout << sStateName << " state cleanup" << "\n";
+    std::cout << sStateName << " state cleanup" << "\n";
 }
 
 void MainMenu::ChangeScene(Scene* scene) {
@@ -50,11 +50,11 @@ Scene* MainMenu::TopScene() {
 }
 
 void MainMenu::Pause() {
-    cout << sStateName << " state paused" << "\n";
+    std::cout << sStateName << " state paused" << "\n";
 }
 
 void MainMenu::Resume() {
-    cout << sStateName << " state resumed" << "\n";
+    std::cout << sStateName << " state resumed" << "\n";
 }
 
 bool HandleSceneEmpty(Game* game) {

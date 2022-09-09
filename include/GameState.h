@@ -11,7 +11,7 @@ protected:
 
 private:
     Game* game;
-    vector<Scene*> scenes;
+    std::vector<Scene*> scenes;
 
 public:
     virtual void Init(Game* game) = 0;

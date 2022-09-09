@@ -11,16 +11,16 @@ private:
     Game* game;
     GameState* state;
 
-    string sSceneName = "Options";
+    std::string sSceneName = "Options";
 
     /* Options */
-    vector<string> vOptions = {
+    std::vector<std::string> vOptions = {
         "Back",
         "Master Volume",
         "SFX",
         "Music"
     };
-    string sOptionsIndicator = "> ";
+    std::string sOptionsIndicator = "> ";
     olc::vi2d vOptionsOffset = {50, 0};
     int nOptionSpacing = 15;
     int nOptionSelected = 0;

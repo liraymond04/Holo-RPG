@@ -13,9 +13,9 @@ private:
     static MainMenu m_MainMenu;
 
     Game* game;
-    vector<Scene*> scenes;
+    std::vector<Scene*> scenes;
 
-    string sStateName = "Main Menu";
+    std::string sStateName = "Main Menu";
 
 public:
     /* Core */

@@ -5,24 +5,24 @@ void OptionsScene::Init(Game* g, GameState* s) {
     game = g; state = s;
     vOptionsOffset.y = game->ScreenHeight() / 2 - (vOptions.size() / 2) * 10;
     vOptionsOffset.x += 100;
-    cout << sSceneName << " scene initialized" << "\n";
+    std::cout << sSceneName << " scene initialized" << "\n";
 }
 
 void OptionsScene::Cleanup() {
-    cout << sSceneName << " scene cleanup" << "\n";
+    std::cout << sSceneName << " scene cleanup" << "\n";
 }
 
 void OptionsScene::Pause() {
-    cout << sSceneName << " scene paused" << "\n";
+    std::cout << sSceneName << " scene paused" << "\n";
 }
 
 void OptionsScene::Resume() {
-    cout << sSceneName << " scene resumed" << "\n";
+    std::cout << sSceneName << " scene resumed" << "\n";
 }
 
 bool OptionsScene::HandleEvents() {
     if (game->GetKey(olc::F).bPressed) {
-        cout << "F key pressed" << "\n";
+        std::cout << "F key pressed" << "\n";
     }
 
     if (game->GetKey(olc::UP).bPressed && nOptionSelected > 0) {
@@ -83,7 +83,7 @@ bool OptionsScene::Update() {
 
 bool OptionsScene::Draw() {
     for (int i=0; i<vOptions.size(); i++) {
-        string sPrefix = i == nOptionSelected ? sOptionsIndicator : "";
+        std::string sPrefix = i == nOptionSelected ? sOptionsIndicator : "";
         game->DrawString(
             {vOptionsOffset.x, vOptionsOffset.y + i * nOptionSpacing},
             sPrefix + vOptions[i]

@@ -3,6 +3,12 @@
 
 bool Game::OnUserCreate() {
     ReadConfig();
+
+    audio_result = ma_engine_init(NULL, &audio_engine);
+    if (audio_result != MA_SUCCESS) {
+        std::cout << "Failed to initialize audio engine" << "\n";
+        return false;
+    }
     
     splashScreen.SetOptions(2, 1, 2.0f, 0.5f, olc::BLACK, olc::BLUE, olc::DARK_GREY, olc::WHITE);
     ChangeState(MainMenu::Instance());
@@ -18,7 +24,7 @@ bool Game::OnUserUpdate(float fElapsedTime) {
 }
 
 void Game::Cleanup() {
-    cout << "Finish" << "\n";
+    std::cout << "Finish" << "\n";
 }
 
 void Game::ChangeState(GameState* state) {
@@ -52,18 +58,18 @@ void Game::PopState() {
 }
 
 void Game::ReadConfig() {
-    ifstream file;
+    std::ifstream file;
     file.open("config.json");
     if (file.fail()) {
-        cout << "Opening config.json failed" << "\n";
+        std::cout << "Opening config.json failed" << "\n";
         return;
     }
     config = json::parse(file);
-    cout << "Opening config.json successful" << "\n";
+    std::cout << "Opening config.json successful" << "\n";
 }
 
 void Game::WriteConfig() {
-    ofstream file("config.json");
+    std::ofstream file("config.json");
     file << config.dump(2);
 }
 
