@@ -29,12 +29,16 @@ public:
         }
     )");
 
-    ma_result audio_result;
-    ma_engine audio_engine;
+    ma_sound_group audio_master;
+    ma_sound_group audio_sfx;
+    ma_sound_group audio_music;
 
 private:
     olcPGEX_SplashScreen splashScreen;
     std::vector<GameState*> states;
+    
+    ma_result audio_result;
+    ma_engine audio_engine;
 
     /* Core */
     bool OnUserCreate() override;
@@ -56,6 +60,10 @@ public:
     /* Config */
     void ReadConfig();
     void WriteConfig();
+
+    /* Audio */
+    void PlaySound(const char* file, ma_sound_group* group);
+    void AudioSetConfig();
 };
 
 #endif

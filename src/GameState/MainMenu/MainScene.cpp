@@ -52,7 +52,7 @@ bool MainScene::HandleEvents() {
                 break;
         }
     }
-
+    
     return true;
 }
 
