@@ -5,7 +5,7 @@
 #include <string>
 #include <algorithm>
 #include <fstream>
-#include <nlohmann/json.hpp>
+#include <lib/nlohmann/json.hpp>
 
 using json = nlohmann::ordered_json;
 
@@ -33,7 +33,10 @@ public:
     ma_sound_group audio_sfx;
     ma_sound_group audio_music;
 
+    ma_sound audio_current_track;
+
 private:
+    bool splashPlaying = true;
     olcPGEX_SplashScreen splashScreen;
     std::vector<GameState*> states;
     
@@ -45,9 +48,9 @@ private:
     bool OnUserUpdate(float fElapsedTime) override;
 
     /* Loop */
-	bool HandleEvents();
-	bool Update();
-	bool Draw();
+	bool HandleEvents(float fElapsedTime);
+	bool Update(float fElapsedTime);
+	bool Draw(float fElapsedTime);
 
 public:
     void Cleanup();
@@ -63,6 +66,7 @@ public:
 
     /* Audio */
     void PlaySound(const char* file, ma_sound_group* group);
+    void InitTrack(const char* file, ma_sound_group* group, ma_sound* sound);
     void AudioSetConfig();
 };
 

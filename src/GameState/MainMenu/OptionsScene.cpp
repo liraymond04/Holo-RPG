@@ -20,7 +20,7 @@ void OptionsScene::Resume() {
     std::cout << sSceneName << " scene resumed" << "\n";
 }
 
-bool OptionsScene::HandleEvents() {
+bool OptionsScene::HandleEvents(float fElapsedTime) {
     if (game->GetKey(olc::F).bPressed) {
         std::cout << "F key pressed" << "\n";
     }
@@ -77,11 +77,11 @@ bool OptionsScene::HandleEvents() {
     return true;
 }
 
-bool OptionsScene::Update() {
+bool OptionsScene::Update(float fElapsedTime) {
     return true;
 }
 
-bool OptionsScene::Draw() {
+bool OptionsScene::Draw(float fElapsedTime) {
     for (int i=0; i<vOptions.size(); i++) {
         std::string sPrefix = i == nOptionSelected ? sOptionsIndicator : "";
         game->DrawString(

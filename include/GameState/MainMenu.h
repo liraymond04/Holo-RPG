@@ -6,12 +6,10 @@
 class Scene;
 
 class MainMenu : public GameState {
-protected:
+public:
     MainMenu() {}
 
 private:
-    static MainMenu m_MainMenu;
-
     Game* game;
     std::vector<Scene*> scenes;
 
@@ -32,14 +30,12 @@ public:
     void Pause();
     void Resume();
 
-    /* Loop */
-    bool HandleEvents();
-    bool Update();
-    bool Draw();
+    bool HandleSceneEmpty(Game* game);
 
-    static MainMenu* Instance() {
-		return &m_MainMenu;
-	}
+    /* Loop */
+    bool HandleEvents(float fElapsedTime);
+    bool Update(float fElapsedTime);
+    bool Draw(float fElapsedTime);
 };
 
 #endif

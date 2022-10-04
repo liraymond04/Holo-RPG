@@ -18,9 +18,9 @@ public:
     virtual void Pause() = 0;
     virtual void Resume() = 0;
 
-    virtual bool HandleEvents() = 0;
-	virtual bool Update() = 0;
-	virtual bool Draw() = 0;
+    virtual bool HandleEvents(float fElapsedTime) = 0;
+	virtual bool Update(float fElapsedTime) = 0;
+	virtual bool Draw(float fElapsedTime) = 0;
 };
 
 

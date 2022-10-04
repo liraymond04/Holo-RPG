@@ -36,9 +36,9 @@ public:
     void Resume();
 
     /* Loop */
-    bool HandleEvents();
-    bool Update();
-    bool Draw();
+    bool HandleEvents(float fElapsedTime);
+    bool Update(float fElapsedTime);
+    bool Draw(float fElapsedTime);
 };
 
 #endif

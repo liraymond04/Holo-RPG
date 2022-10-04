@@ -15,16 +15,19 @@ bool Game::OnUserCreate() {
     AudioSetConfig();
     
     splashScreen.SetOptions(2, 1, 2.0f, 0.5f, olc::BLACK, olc::BLUE, olc::DARK_GREY, olc::WHITE);
-    ChangeState(MainMenu::Instance());
 
     return true;
 }
 
 bool Game::OnUserUpdate(float fElapsedTime) {
     if (splashScreen.AnimateSplashScreen(fElapsedTime)) return true;
-    return HandleEvents() &&
-        Update() && 
-        Draw();
+    else if (splashPlaying) {
+        ChangeState(new MainMenu);
+        splashPlaying = false;
+    }
+    return HandleEvents(fElapsedTime) &&
+        Update(fElapsedTime) && 
+        Draw(fElapsedTime);
 }
 
 void Game::Cleanup() {
@@ -83,23 +86,27 @@ void Game::PlaySound(const char* file, ma_sound_group* group) {
     ma_engine_play_sound(&audio_engine, file, group);
 }
 
+void Game::InitTrack(const char *file, ma_sound_group* group, ma_sound* sound) {
+    ma_sound_init_from_file(&audio_engine, file, MA_SOUND_FLAG_STREAM, group, NULL, sound);
+}
+
 void Game::AudioSetConfig() {
     ma_sound_group_set_volume(&audio_master, (float)config["Master Volume"] / 100);
     ma_sound_group_set_volume(&audio_sfx, (float)config["SFX"] / 100);
     ma_sound_group_set_volume(&audio_music, (float)config["Music"] / 100);
 }
 
-bool Game::HandleEvents() {
+bool Game::HandleEvents(float fElapsedTime) {
     if (states.empty()) return false;
-    return states.back()->HandleEvents();
+    return states.back()->HandleEvents(fElapsedTime);
 }
 
-bool Game::Update() {
+bool Game::Update(float fElapsedTime) {
     if (states.empty()) return false;
-    return states.back()->Update();
+    return states.back()->Update(fElapsedTime);
 }
 
-bool Game::Draw() {
+bool Game::Draw(float fElapsedTime) {
     if (states.empty()) return false;
-    return states.back()->Draw();
+    return states.back()->Draw(fElapsedTime);
 }

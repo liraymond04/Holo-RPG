@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "GameState/MainMenu/MainScene.h"
 #include "GameState/MainMenu/OptionsScene.h"
+#include "GameState/Play.h"
 
 void MainScene::Init(Game* g, GameState* s) {
     game = g; state = s;
@@ -20,9 +21,10 @@ void MainScene::Resume() {
     std::cout << sSceneName << " scene resumed" << "\n";
 }
 
-bool MainScene::HandleEvents() {
+bool MainScene::HandleEvents(float fElapsedTime) {
     if (game->GetKey(olc::F).bPressed) {
         std::cout << "F key pressed" << "\n";
+        game->PlaySound("assets/sounds/bottle-smash-101001.mp3", &game->audio_sfx);
     }
 
     if (game->GetKey(olc::UP).bPressed && nOptionSelected > 0) {
@@ -36,6 +38,7 @@ bool MainScene::HandleEvents() {
         switch (nOptionSelected) {
             case 0: // Play
                 std::cout << "Play selected" << "\n";
+                game->ChangeState(new Play);
                 break;
             case 1: // Options
                 std::cout << "Options selected" << "\n";
@@ -56,11 +59,11 @@ bool MainScene::HandleEvents() {
     return true;
 }
 
-bool MainScene::Update() {
+bool MainScene::Update(float fElapsedTime) {
     return true;
 }
 
-bool MainScene::Draw() {
+bool MainScene::Draw(float fElapsedTime) {
     for (int i=0; i<vOptions.size(); i++) {
         std::string sPrefix = i == nOptionSelected ? sOptionsIndicator : "";
         game->DrawString(

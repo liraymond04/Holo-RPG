@@ -3,15 +3,17 @@
 #include "GameState/MainMenu.h"
 #include "GameState/MainMenu/MainScene.h"
 
-MainMenu MainMenu::m_MainMenu;
-
 void MainMenu::Init(Game* g) {
     game = g;
     ChangeScene(new MainScene);
+    game->InitTrack("assets/music/Failing Defense.mp3", &game->audio_music, &game->audio_current_track);
+    ma_sound_start(&game->audio_current_track);
+    ma_sound_set_looping(&game->audio_current_track, true);
     std::cout << sStateName << " state initialized" << "\n";
 }
 
 void MainMenu::Cleanup() {
+    ma_sound_stop(&game->audio_current_track);
     std::cout << sStateName << " state cleanup" << "\n";
 }
 
@@ -57,22 +59,22 @@ void MainMenu::Resume() {
     std::cout << sStateName << " state resumed" << "\n";
 }
 
-bool HandleSceneEmpty(Game* game) {
+bool MainMenu::HandleSceneEmpty(Game* game) {
     game->PopState();
     return false;
 }
 
-bool MainMenu::HandleEvents() {
+bool MainMenu::HandleEvents(float fElapsedTime) {
     if (scenes.empty()) return HandleSceneEmpty(game);
-    return scenes.back()->HandleEvents();
+    return scenes.back()->HandleEvents(fElapsedTime);
 }
 
-bool MainMenu::Update() {
+bool MainMenu::Update(float fElapsedTime) {
     if (scenes.empty()) return HandleSceneEmpty(game);
-    return scenes.back()->Update();
+    return scenes.back()->Update(fElapsedTime);
 }
 
-bool MainMenu::Draw() {
+bool MainMenu::Draw(float fElapsedTime) {
     if (scenes.empty()) return HandleSceneEmpty(game);
 
     game->Clear(olc::BLACK);
@@ -80,7 +82,7 @@ bool MainMenu::Draw() {
     bool result = true;
     for (Scene* scene : scenes) {
         if (!result) break;
-        result &= scene->Draw();
+        result &= scene->Draw(fElapsedTime);
     }
     return result;
 }
