@@ -5,6 +5,7 @@
 #include <string>
 #include <algorithm>
 #include <fstream>
+#include <strstream>
 #include <lib/nlohmann/json.hpp>
 
 using json = nlohmann::ordered_json;
