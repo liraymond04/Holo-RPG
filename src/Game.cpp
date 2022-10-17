@@ -27,7 +27,7 @@ bool Game::OnUserUpdate(float fElapsedTime) {
     }
     return HandleEvents(fElapsedTime) &&
         Update(fElapsedTime) && 
-        Draw(fElapsedTime);
+        Render(fElapsedTime);
 }
 
 void Game::Cleanup() {
@@ -106,7 +106,7 @@ bool Game::Update(float fElapsedTime) {
     return states.back()->Update(fElapsedTime);
 }
 
-bool Game::Draw(float fElapsedTime) {
+bool Game::Render(float fElapsedTime) {
     if (states.empty()) return false;
     return states.back()->Draw(fElapsedTime);
 }

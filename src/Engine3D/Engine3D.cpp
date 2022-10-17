@@ -1,183 +1,394 @@
 #include "Engine3D/Engine3D.h"
+#include "Engine3D/Camera.h"
+#include "Engine3D/Shaders/SimpleShader.h"
 
-void Engine3D::Init(Game* g) {
+void Engine3D::Init(Game *g)
+{
     game = g;
 
-	meshCube.LoadFromObj("assets/models/ame.obj");
-	matProj = mat4x4_MakeProjection(90.0f, (float)g->ScreenHeight() / (float)g->ScreenWidth(), 0.1f, 1000.0f);
+    meshCube.LoadFromObj("assets/models/mountains.obj");
+    vRenderBuffer.push_back(&meshCube);
+    // load texture
+
+    camera = new Camera();
+    matProj = mat4x4_MakeProjection(90.0f, (float)g->ScreenHeight() / (float)g->ScreenWidth(), 0.1f, 1000.0f);
+
+    shader = new SimpleShader;
+    shader->camera = camera;
+    shader->game = game;
 }
 
-bool Engine3D::Update(float fElapsedTime) {
-	vec3d vUp = { 0, 1, 0 };
+bool Engine3D::Update(float fElapsedTime)
+{
+    vec3d vUp = {0, 1, 0};
 
-	vec3d vForward = vLookDir* (fCameraSpeed * fElapsedTime);
-	vec3d vRight = vec3d_CrossProduct(vUp, vForward);
+    vec3d vTarget = {0, 0, 1};
+    mat4x4 matCameraRot = mat4x4_MakeRotation(camera->fPitch, camera->fYaw, 0.0f);
+    camera->vLookDir = matCameraRot * vTarget;
+    vTarget = camera->vPos + camera->vLookDir;
+    mat4x4 matCamera = mat4x4_PointAt(camera->vPos, vTarget, vUp);
 
-	if (game->GetKey(olc::W).bHeld) {
-		vCamera += vForward;
-	}
-	if (game->GetKey(olc::S).bHeld) {
-		vCamera -= vForward;
-	}
-	if (game->GetKey(olc::A).bHeld) {
-		vCamera += vRight;
-	}
-	if (game->GetKey(olc::D).bHeld) {
-		vCamera -= vRight;
-	}
+    mat4x4 matView = mat4x4_QuickInverse(matCamera);
 
-	if (game->GetKey(olc::UP).bHeld) {
-		vCamera.y += fCameraSpeed * fElapsedTime;
-	}
-	if (game->GetKey(olc::DOWN).bHeld) {
-		vCamera.y -= fCameraSpeed * fElapsedTime;
-	}
-	if (game->GetKey(olc::LEFT).bHeld) {
-		fYaw -= fTurnSpeed * fElapsedTime;
-	}
-	if (game->GetKey(olc::RIGHT).bHeld) {
-		fYaw += fTurnSpeed * fElapsedTime;
-	}
+    if (game->GetKey(olc::J).bHeld)
+    {
+        fTheta -= camera->fTurnSpeed * fElapsedTime;
+    }
+    if (game->GetKey(olc::K).bHeld)
+    {
+        fTheta += camera->fTurnSpeed * fElapsedTime;
+    }
 
-	if (game->GetKey(olc::J).bHeld) {
-		fTheta -= fTurnSpeed * fElapsedTime;
-	}
-	if (game->GetKey(olc::K).bHeld) {
-		fTheta += fTurnSpeed * fElapsedTime;
-	}
+    if (game->GetKey(olc::X).bHeld)
+    {
+        vScale.x += camera->fTurnSpeed * fElapsedTime * pow(-1, game->GetKey(olc::CTRL).bHeld);
+    }
+    if (game->GetKey(olc::Y).bHeld)
+    {
+        vScale.y += camera->fTurnSpeed * fElapsedTime * pow(-1, game->GetKey(olc::CTRL).bHeld);
+    }
+    if (game->GetKey(olc::Z).bHeld)
+    {
+        vScale.z += camera->fTurnSpeed * fElapsedTime * pow(-1, game->GetKey(olc::CTRL).bHeld);
+    }
 
-	mat4x4 matRotZ, matRotX;
-	//fTheta += 1.0f * fElapsedTime;
-	matRotZ = mat4x4_MakeRotationZ(0);
-	matRotX = mat4x4_MakeRotationY(fTheta);
+    // depth buffer
+    // lighting system
 
-	mat4x4 matTrans;
-	matTrans = mat4x4_MakeTranslation(0.0f, 0.0f, 5.0f);
+    std::vector<triangle> vecTrianglesToRaster;
 
-	mat4x4 matWorld;
-	matWorld = mat4x4_MakeIdentity();
-	matWorld = matRotZ * matRotX;
-	matWorld = matWorld * matTrans;
+    for (const mesh* m : vRenderBuffer) {
+        mat4x4 matScale, matRot, matTrans, matWorld;
+        // fTheta += 1.0f * fElapsedTime;
+        matScale = mat4x4_MakeScale(vScale);
+        matRot = mat4x4_MakeRotation(0.0f, fTheta, 0.0f);
+        matTrans = mat4x4_MakeTranslation(0.0f, 0.0f, 5.0f);
+        matWorld = matScale * matRot * matTrans;
 
-	vec3d vTarget = { 0, 0, 1 };
-	mat4x4 matCameraRot = mat4x4_MakeRotationY(fYaw);
-	vLookDir = matCameraRot * vTarget;
-	vTarget = vCamera + vLookDir;
-	mat4x4 matCamera = mat4x4_PointAt(vCamera, vTarget, vUp);
+        MVPTransform mvp = {matWorld, matView, matProj};
 
-	mat4x4 matView = mat4x4_QuickInverse(matCamera);
+        for (const triangle &tri : m->tris) {
+            shader->VertexShader(vecTrianglesToRaster, tri, mvp);
+        }
+    }
 
-	std::vector<triangle> vecTrianglesToRaster;
+    // replace z sort with a depth buffer
+    sort(vecTrianglesToRaster.begin(), vecTrianglesToRaster.end(), [](triangle &t1, triangle &t2) {
+        float z1 = (t1.p[0].z + t1.p[1].z + t1.p[2].z) / 3.0f;
+        float z2 = (t2.p[0].z + t2.p[1].z + t2.p[2].z) / 3.0f;
+        return z1 > z2;
+    });
 
-	for (auto &tri : meshCube.tris) {
-		triangle triProjected, triTransformed, triViewed;
+    ClipAndRasterize(vecTrianglesToRaster, olc::WHITE, shader);
 
-		triTransformed.p[0] = matWorld * tri.p[0];
-		triTransformed.p[1] = matWorld * tri.p[1];
-		triTransformed.p[2] = matWorld * tri.p[2];
+    // Clear Screen
+    // Fill(0, 0, ScreenWidth(), ScreenHeight(), PIXEL_SOLID, FG_BLACK);
 
-		vec3d normal, line1, line2;
+    return true;
+}
 
-		line1 = triTransformed.p[1] - triTransformed.p[0];
-		line2 = triTransformed.p[2] - triTransformed.p[0];
+void Engine3D::ClipAndRasterize(const std::vector<triangle> &vecTrianglesToRaster, const olc::Pixel &col, Shader* shader) {
+    for (auto &triToRaster : vecTrianglesToRaster) {
+        triangle clipped[2];
+        std::list<triangle> listTriangles;
 
-		normal = vec3d_CrossProduct(line1, line2);
-		normal = vec3d_Normalise(normal);
-		
-		vec3d vCameraRay = triTransformed.p[0] - vCamera;
+        listTriangles.push_back(triToRaster);
+        int nNewTriangles = 1;
 
-		if (vec3d_DotProduct(normal, vCameraRay) < 0.0f) {
-			vec3d light_direction = { 0.0f, 1.0f, -1.0f };
-			light_direction = vec3d_Normalise(light_direction);
+        for (int p = 0; p < 4; p++) {
+            int nTrisToAdd = 0;
+            while (nNewTriangles > 0) {
+                triangle test = listTriangles.front();
+                listTriangles.pop_front();
+                nNewTriangles--;
 
-			float dp = std::max(0.1f, vec3d_DotProduct(light_direction, normal));
+                switch (p)
+                {
+                case 0:
+                    nTrisToAdd = triangle_ClipAgainstPlane({0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, test, clipped[0], clipped[1]);
+                    break;
+                case 1:
+                    nTrisToAdd = triangle_ClipAgainstPlane({0.0f, (float)game->ScreenHeight() - 1, 0.0f}, {0.0f, -1.0f, 0.0f}, test, clipped[0], clipped[1]);
+                    break;
+                case 2:
+                    nTrisToAdd = triangle_ClipAgainstPlane({0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, test, clipped[0], clipped[1]);
+                    break;
+                case 3:
+                    nTrisToAdd = triangle_ClipAgainstPlane({(float)game->ScreenWidth() - 1, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, test, clipped[0], clipped[1]);
+                    break;
+                }
 
-			olc::Pixel c = GetColour(dp);
-			triTransformed.col = c;
+                for (int w = 0; w < nTrisToAdd; w++)
+                    listTriangles.push_back(clipped[w]);
+            }
+            nNewTriangles = listTriangles.size();
+        }
 
-			triViewed.p[0] = matView * triTransformed.p[0];
-			triViewed.p[1] = matView * triTransformed.p[1];
-			triViewed.p[2] = matView * triTransformed.p[2];
-			triViewed.col = triTransformed.col;
+        for (auto &t : listTriangles) {
+            // game->FillTriangle({(int)t.p[0].x, (int)t.p[0].y}, {(int)t.p[1].x, (int)t.p[1].y}, {(int)t.p[2].x, (int)t.p[2].y}, t.col);
+            RasterizeTriangle(t, olc::WHITE, shader);
+        }
+    }
+}
 
-			int nClippedTriangles = 0;
-			triangle clipped[2];
-			nClippedTriangles = triangle_ClipAgainstPlane({ 0.0f, 0.0f, 0.1f }, { 0.0f, 0.0f, 1.0f }, triViewed, clipped[0], clipped[1]);
+void Engine3D::RasterizeTriangle(triangle &t, olc::Pixel p, Shader *shader)
+{
+    int32_t x1 = t.p[0].x, y1 = t.p[0].y, x2 = t.p[1].x, y2 = t.p[1].y, x3 = t.p[2].x, y3 = t.p[2].y;
 
-			for (int n = 0; n < nClippedTriangles; n++) {
-				triProjected.p[0] = matProj * clipped[n].p[0];
-				triProjected.p[1] = matProj * clipped[n].p[1];
-				triProjected.p[2] = matProj * clipped[n].p[2];
-				triProjected.col = clipped[n].col;
+    auto drawline = [&](int sx, int ex, int ny)
+    {
+        float u, v, w;
+        for (int i = sx; i <= ex; i++)
+        {
+            t.Barycentric(i, ny, u, v, w);
+            game->Draw(i, ny, shader->FragmentShader(p, t, u, v, w));
+        }
+    };
 
-				triProjected.p[0] /= triProjected.p[0].w;
-				triProjected.p[1] /= triProjected.p[1].w;
-				triProjected.p[2] /= triProjected.p[2].w;
+    int t1x, t2x, y, minx, maxx, t1xp, t2xp;
+    bool changed1 = false;
+    bool changed2 = false;
+    int signx1, signx2, dx1, dy1, dx2, dy2;
+    int e1, e2;
+    // Sort vertices
+    if (y1 > y2)
+    {
+        std::swap(y1, y2);
+        std::swap(x1, x2);
+    }
+    if (y1 > y3)
+    {
+        std::swap(y1, y3);
+        std::swap(x1, x3);
+    }
+    if (y2 > y3)
+    {
+        std::swap(y2, y3);
+        std::swap(x2, x3);
+    }
 
-				triProjected.p[0].x *= -1.0f;
-				triProjected.p[1].x *= -1.0f;
-				triProjected.p[2].x *= -1.0f;
-				triProjected.p[0].y *= -1.0f;
-				triProjected.p[1].y *= -1.0f;
-				triProjected.p[2].y *= -1.0f;
+    t1x = t2x = x1;
+    y = y1; // Starting points
+    dx1 = (int)(x2 - x1);
+    if (dx1 < 0)
+    {
+        dx1 = -dx1;
+        signx1 = -1;
+    }
+    else
+        signx1 = 1;
+    dy1 = (int)(y2 - y1);
 
-				vec3d vOffsetView = { 1,1,0 };
-				triProjected.p[0] += vOffsetView;
-				triProjected.p[1] += vOffsetView;
-				triProjected.p[2] += vOffsetView;
-				triProjected.p[0].x *= 0.5f * (float)game->ScreenWidth();
-				triProjected.p[0].y *= 0.5f * (float)game->ScreenHeight();
-				triProjected.p[1].x *= 0.5f * (float)game->ScreenWidth();
-				triProjected.p[1].y *= 0.5f * (float)game->ScreenHeight();
-				triProjected.p[2].x *= 0.5f * (float)game->ScreenWidth();
-				triProjected.p[2].y *= 0.5f * (float)game->ScreenHeight();
+    dx2 = (int)(x3 - x1);
+    if (dx2 < 0)
+    {
+        dx2 = -dx2;
+        signx2 = -1;
+    }
+    else
+        signx2 = 1;
+    dy2 = (int)(y3 - y1);
 
-				vecTrianglesToRaster.push_back(triProjected);
-			}			
-		}
-	}
+    if (dy1 > dx1)
+    {
+        std::swap(dx1, dy1);
+        changed1 = true;
+    }
+    if (dy2 > dx2)
+    {
+        std::swap(dy2, dx2);
+        changed2 = true;
+    }
 
-	sort(vecTrianglesToRaster.begin(), vecTrianglesToRaster.end(), [](triangle &t1, triangle &t2) {
-		float z1 = (t1.p[0].z + t1.p[1].z + t1.p[2].z) / 3.0f;
-		float z2 = (t2.p[0].z + t2.p[1].z + t2.p[2].z) / 3.0f;
-		return z1 > z2;
-	});
+    e2 = (int)(dx2 >> 1);
+    // Flat top, just process the second half
+    if (y1 == y2)
+        goto next;
+    e1 = (int)(dx1 >> 1);
 
-	// Clear Screen
-	// Fill(0, 0, ScreenWidth(), ScreenHeight(), PIXEL_SOLID, FG_BLACK);
+    for (int i = 0; i < dx1;)
+    {
+        t1xp = 0;
+        t2xp = 0;
+        if (t1x < t2x)
+        {
+            minx = t1x;
+            maxx = t2x;
+        }
+        else
+        {
+            minx = t2x;
+            maxx = t1x;
+        }
+        // process first line until y value is about to change
+        while (i < dx1)
+        {
+            i++;
+            e1 += dy1;
+            while (e1 >= dx1)
+            {
+                e1 -= dx1;
+                if (changed1)
+                    t1xp = signx1; // t1x += signx1;
+                else
+                    goto next1;
+            }
+            if (changed1)
+                break;
+            else
+                t1x += signx1;
+        }
+        // Move line
+    next1:
+        // process second line until y value is about to change
+        while (1)
+        {
+            e2 += dy2;
+            while (e2 >= dx2)
+            {
+                e2 -= dx2;
+                if (changed2)
+                    t2xp = signx2; // t2x += signx2;
+                else
+                    goto next2;
+            }
+            if (changed2)
+                break;
+            else
+                t2x += signx2;
+        }
+    next2:
+        if (minx > t1x)
+            minx = t1x;
+        if (minx > t2x)
+            minx = t2x;
+        if (maxx < t1x)
+            maxx = t1x;
+        if (maxx < t2x)
+            maxx = t2x;
+        drawline(minx, maxx, y); // Draw line from min to max points found on the y
+                                 // Now increase y
+        if (!changed1)
+            t1x += signx1;
+        t1x += t1xp;
+        if (!changed2)
+            t2x += signx2;
+        t2x += t2xp;
+        y += 1;
+        if (y == y2)
+            break;
+    }
+next:
+    // Second half
+    dx1 = (int)(x3 - x2);
+    if (dx1 < 0)
+    {
+        dx1 = -dx1;
+        signx1 = -1;
+    }
+    else
+        signx1 = 1;
+    dy1 = (int)(y3 - y2);
+    t1x = x2;
 
-	for (auto &triToRaster : vecTrianglesToRaster) {
-		triangle clipped[2];
-		std::list<triangle> listTriangles;
+    if (dy1 > dx1)
+    { // swap values
+        std::swap(dy1, dx1);
+        changed1 = true;
+    }
+    else
+        changed1 = false;
 
-		listTriangles.push_back(triToRaster);
-		int nNewTriangles = 1;
+    e1 = (int)(dx1 >> 1);
 
-		for (int p = 0; p < 4; p++) {
-			int nTrisToAdd = 0;
-			while (nNewTriangles > 0) {
-				triangle test = listTriangles.front();
-				listTriangles.pop_front();
-				nNewTriangles--;
+    for (int i = 0; i <= dx1; i++)
+    {
+        t1xp = 0;
+        t2xp = 0;
+        if (t1x < t2x)
+        {
+            minx = t1x;
+            maxx = t2x;
+        }
+        else
+        {
+            minx = t2x;
+            maxx = t1x;
+        }
+        // process first line until y value is about to change
+        while (i < dx1)
+        {
+            e1 += dy1;
+            while (e1 >= dx1)
+            {
+                e1 -= dx1;
+                if (changed1)
+                {
+                    t1xp = signx1;
+                    break;
+                } // t1x += signx1;
+                else
+                    goto next3;
+            }
+            if (changed1)
+                break;
+            else
+                t1x += signx1;
+            if (i < dx1)
+                i++;
+        }
+    next3:
+        // process second line until y value is about to change
+        while (t2x != x3)
+        {
+            e2 += dy2;
+            while (e2 >= dx2)
+            {
+                e2 -= dx2;
+                if (changed2)
+                    t2xp = signx2;
+                else
+                    goto next4;
+            }
+            if (changed2)
+                break;
+            else
+                t2x += signx2;
+        }
+    next4:
 
-				switch (p)
-				{
-				case 0:	nTrisToAdd = triangle_ClipAgainstPlane({ 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, test, clipped[0], clipped[1]); break;
-				case 1:	nTrisToAdd = triangle_ClipAgainstPlane({ 0.0f, (float)game->ScreenHeight() - 1, 0.0f }, { 0.0f, -1.0f, 0.0f }, test, clipped[0], clipped[1]); break;
-				case 2:	nTrisToAdd = triangle_ClipAgainstPlane({ 0.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f }, test, clipped[0], clipped[1]); break;
-				case 3:	nTrisToAdd = triangle_ClipAgainstPlane({ (float)game->ScreenWidth() - 1, 0.0f, 0.0f }, { -1.0f, 0.0f, 0.0f }, test, clipped[0], clipped[1]); break;
-				}
+        if (minx > t1x)
+            minx = t1x;
+        if (minx > t2x)
+            minx = t2x;
+        if (maxx < t1x)
+            maxx = t1x;
+        if (maxx < t2x)
+            maxx = t2x;
+        drawline(minx, maxx, y);
+        if (!changed1)
+            t1x += signx1;
+        t1x += t1xp;
+        if (!changed2)
+            t2x += signx2;
+        t2x += t2xp;
+        y += 1;
+        if (y > y3)
+            return;
+    }
+}
 
-				for (int w = 0; w < nTrisToAdd; w++)
-					listTriangles.push_back(clipped[w]);
-			}
-			nNewTriangles = listTriangles.size();
-		}
-
-		for (auto &t : listTriangles) {
-			game->FillTriangle({(int)t.p[0].x, (int)t.p[0].y}, {(int)t.p[1].x, (int)t.p[1].y}, {(int)t.p[2].x, (int)t.p[2].y}, t.col);
-		}
-	}
-
-	return true;
+void Engine3D::Barycentric(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3, int32_t y3, float &u, float &v, float &w)
+{
+    vec3d p = { (float)x0, (float)y0 }, a = { (float)x1, (float)y1 }, b = { (float)x2, (float)y2 }, c = { (float)x3, (float)y3 };
+    vec3d v0 = b - a, v1 = c - a, v2 = p - a;
+    float d00 = vec3d_DotProduct(v0, v0);
+    float d01 = vec3d_DotProduct(v0, v1);
+    float d11 = vec3d_DotProduct(v1, v1);
+    float d20 = vec3d_DotProduct(v2, v0);
+    float d21 = vec3d_DotProduct(v2, v1);
+    float denom = d00 * d11 - d01 * d01;
+    v = (d11 * d20 - d01 * d21) / denom;
+    w = (d00 * d21 - d01 * d20) / denom;
+    u = 1.0f - v - w;
 }

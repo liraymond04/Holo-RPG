@@ -51,7 +51,7 @@ private:
     /* Loop */
 	bool HandleEvents(float fElapsedTime);
 	bool Update(float fElapsedTime);
-	bool Draw(float fElapsedTime);
+	bool Render(float fElapsedTime);
 
 public:
     void Cleanup();
