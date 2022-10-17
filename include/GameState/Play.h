@@ -10,14 +10,14 @@ public:
     Play() {}
 
 private:
-    Game* game;
+    Holo::RPG* game;
     std::vector<Scene*> scenes;
 
     std::string sStateName = "Play";
 
 public:
     /* Core */
-    void Init(Game* g);
+    void Init(Holo::RPG* g);
     void Cleanup();
 
     /* Scene */
@@ -30,7 +30,7 @@ public:
     void Pause();
     void Resume();
 
-    bool HandleSceneEmpty(Game* game);
+    bool HandleSceneEmpty(Holo::RPG* game);
 
     /* Loop */
     bool HandleEvents(float fElapsedTime);

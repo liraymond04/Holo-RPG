@@ -1,11 +1,11 @@
-#include "Game.h"
+#include "RPG.h"
 #include "GameState/Play/PlayScene.h"
 
 #include "Engine3D/Camera.h"
 
 #define PI_BY_2 M_PI / 2
 
-void PlayScene::Init(Game* g, GameState* s) {
+void PlayScene::Init(Holo::RPG* g, GameState* s) {
     game = g; state = s;
     e3d.Init(game);
     std::cout << sSceneName << " scene initialized" << "\n";

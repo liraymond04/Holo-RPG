@@ -1,7 +1,7 @@
-#include "Game.h"
+#include "RPG.h"
 #include "GameState/MainMenu/OptionsScene.h"
 
-void OptionsScene::Init(Game* g, GameState* s) {
+void OptionsScene::Init(Holo::RPG* g, GameState* s) {
     game = g; state = s;
     vOptionsOffset.y = game->ScreenHeight() / 2 - (vOptions.size() / 2) * 10;
     vOptionsOffset.x += 100;

@@ -1,7 +1,7 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
-#include "Game.h"
+#include "RPG.h"
 
 class Scene;
 
@@ -10,11 +10,11 @@ protected:
     GameState() {}
 
 private:
-    Game* game;
+    Holo::RPG* game;
     std::vector<Scene*> scenes;
 
 public:
-    virtual void Init(Game* game) = 0;
+    virtual void Init(Holo::RPG* game) = 0;
     virtual void Cleanup() = 0;
 
     virtual void ChangeScene(Scene* scene) = 0;

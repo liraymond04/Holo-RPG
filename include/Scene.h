@@ -8,11 +8,11 @@ public:
     Scene() {}
 
 private:
-    Game* game;
+    Holo::RPG* game;
     GameState* state;
 
 public:
-    virtual void Init(Game* g, GameState* state) = 0;
+    virtual void Init(Holo::RPG* g, GameState* state) = 0;
     virtual void Cleanup() = 0;
 
     virtual void Pause() = 0;

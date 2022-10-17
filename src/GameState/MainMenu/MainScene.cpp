@@ -1,9 +1,9 @@
-#include "Game.h"
+#include "RPG.h"
 #include "GameState/MainMenu/MainScene.h"
 #include "GameState/MainMenu/OptionsScene.h"
 #include "GameState/Play.h"
 
-void MainScene::Init(Game* g, GameState* s) {
+void MainScene::Init(Holo::RPG* g, GameState* s) {
     game = g; state = s;
     vOptionsOffset.y = game->ScreenHeight() / 2 - (vOptions.size() / 2) * 10;
     std::cout << sSceneName << " scene initialized" << "\n";

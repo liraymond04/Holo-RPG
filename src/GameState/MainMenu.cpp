@@ -1,9 +1,9 @@
-#include "Game.h"
+#include "RPG.h"
 #include "Scene.h"
 #include "GameState/MainMenu.h"
 #include "GameState/MainMenu/MainScene.h"
 
-void MainMenu::Init(Game* g) {
+void MainMenu::Init(Holo::RPG* g) {
     game = g;
     ChangeScene(new MainScene);
     game->InitTrack("assets/music/Failing Defense.mp3", &game->audio_music, &game->audio_current_track);
@@ -59,7 +59,7 @@ void MainMenu::Resume() {
     std::cout << sStateName << " state resumed" << "\n";
 }
 
-bool MainMenu::HandleSceneEmpty(Game* game) {
+bool MainMenu::HandleSceneEmpty(Holo::RPG* game) {
     game->PopState();
     return false;
 }

@@ -8,7 +8,7 @@ public:
     OptionsScene() {}
 
 private:
-    Game* game;
+    Holo::RPG* game;
     GameState* state;
 
     std::string sSceneName = "Options";
@@ -31,7 +31,7 @@ private:
 
 public:
     /* Core */
-    void Init(Game *g, GameState* s);
+    void Init(Holo::RPG *g, GameState* s);
     void Cleanup();
 
     /* Flow */

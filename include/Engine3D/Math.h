@@ -1,7 +1,7 @@
 #ifndef ENGINE3D_MATH_H
 #define ENGINE3D_MATH_H
 
-#include "Game.h"
+#include "RPG.h"
 
 struct vec3d
 {

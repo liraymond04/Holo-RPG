@@ -1,7 +1,7 @@
 #ifndef ENGINE3D_H
 #define ENGINE3D_H
 
-#include "Game.h"
+#include "RPG.h"
 #include "Engine3D/Math.h"
 
 class Camera;
@@ -20,7 +20,7 @@ public:
     Engine3D() {}
 
 private:
-    Game* game;
+    Holo::RPG* game;
 
 	std::vector<mesh*> vRenderBuffer;
 
@@ -37,7 +37,7 @@ public:
 	Camera* camera; // possibly change camera to struct
 	SimpleShader* shader;
 
-    void Init(Game* game);
+    void Init(Holo::RPG* game);
     bool Update(float fElapsedTime);
 };
 

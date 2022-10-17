@@ -9,7 +9,7 @@ public:
     PlayScene() {}
 
 private:
-    Game* game;
+    Holo::RPG* game;
     GameState* state;
 
     std::string sSceneName = "Main";
@@ -18,7 +18,7 @@ private:
 
 public:
     /* Core */
-    void Init(Game *g, GameState* s);
+    void Init(Holo::RPG *g, GameState* s);
     void Cleanup();
 
     /* Flow */

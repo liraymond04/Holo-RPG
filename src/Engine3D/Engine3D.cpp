@@ -2,7 +2,7 @@
 #include "Engine3D/Camera.h"
 #include "Engine3D/Shaders/SimpleShader.h"
 
-void Engine3D::Init(Game *g)
+void Engine3D::Init(Holo::RPG *g)
 {
     game = g;
 

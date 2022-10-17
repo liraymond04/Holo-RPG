@@ -1,7 +1,7 @@
-#include "Game.h"
+#include "RPG.h"
 #include "GameState/MainMenu.h"
 
-bool Game::OnUserCreate() {
+bool Holo::RPG::OnUserCreate() {
     ReadConfig();
 
     audio_result = ma_engine_init(NULL, &audio_engine);
@@ -19,7 +19,7 @@ bool Game::OnUserCreate() {
     return true;
 }
 
-bool Game::OnUserUpdate(float fElapsedTime) {
+bool Holo::RPG::OnUserUpdate(float fElapsedTime) {
     if (splashScreen.AnimateSplashScreen(fElapsedTime)) return true;
     else if (splashPlaying) {
         ChangeState(new MainMenu);
@@ -30,12 +30,12 @@ bool Game::OnUserUpdate(float fElapsedTime) {
         Render(fElapsedTime);
 }
 
-void Game::Cleanup() {
+void Holo::RPG::Cleanup() {
     ma_engine_uninit(&audio_engine);
     std::cout << "Finish" << "\n";
 }
 
-void Game::ChangeState(GameState* state) {
+void Holo::RPG::ChangeState(GameState* state) {
     if (!states.empty()) {
         states.back()->Cleanup();
         states.pop_back();
@@ -45,7 +45,7 @@ void Game::ChangeState(GameState* state) {
     states.back()->Init(this);
 }
 
-void Game::PushState(GameState* state) {
+void Holo::RPG::PushState(GameState* state) {
     if (!states.empty()) {
         states.back()->Pause();
     }
@@ -54,7 +54,7 @@ void Game::PushState(GameState* state) {
     states.back()->Init(this);
 }
 
-void Game::PopState() {
+void Holo::RPG::PopState() {
     if (!states.empty()) {
         states.back()->Cleanup();
         states.pop_back();
@@ -65,7 +65,7 @@ void Game::PopState() {
     }
 }
 
-void Game::ReadConfig() {
+void Holo::RPG::ReadConfig() {
     std::ifstream file;
     file.open("config.json");
     if (file.fail()) {
@@ -76,37 +76,37 @@ void Game::ReadConfig() {
     std::cout << "Opening config.json successful" << "\n";
 }
 
-void Game::WriteConfig() {
+void Holo::RPG::WriteConfig() {
     AudioSetConfig();
     std::ofstream file("config.json");
     file << config.dump(2);
 }
 
-void Game::PlaySound(const char* file, ma_sound_group* group) {
+void Holo::RPG::PlaySound(const char* file, ma_sound_group* group) {
     ma_engine_play_sound(&audio_engine, file, group);
 }
 
-void Game::InitTrack(const char *file, ma_sound_group* group, ma_sound* sound) {
+void Holo::RPG::InitTrack(const char *file, ma_sound_group* group, ma_sound* sound) {
     ma_sound_init_from_file(&audio_engine, file, MA_SOUND_FLAG_STREAM, group, NULL, sound);
 }
 
-void Game::AudioSetConfig() {
+void Holo::RPG::AudioSetConfig() {
     ma_sound_group_set_volume(&audio_master, (float)config["Master Volume"] / 100);
     ma_sound_group_set_volume(&audio_sfx, (float)config["SFX"] / 100);
     ma_sound_group_set_volume(&audio_music, (float)config["Music"] / 100);
 }
 
-bool Game::HandleEvents(float fElapsedTime) {
+bool Holo::RPG::HandleEvents(float fElapsedTime) {
     if (states.empty()) return false;
     return states.back()->HandleEvents(fElapsedTime);
 }
 
-bool Game::Update(float fElapsedTime) {
+bool Holo::RPG::Update(float fElapsedTime) {
     if (states.empty()) return false;
     return states.back()->Update(fElapsedTime);
 }
 
-bool Game::Render(float fElapsedTime) {
+bool Holo::RPG::Render(float fElapsedTime) {
     if (states.empty()) return false;
     return states.back()->Draw(fElapsedTime);
 }

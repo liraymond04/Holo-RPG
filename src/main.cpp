@@ -1,7 +1,7 @@
-#include "Game.h"
+#include "RPG.h"
 
 int main() {
-    Game game;
+    Holo::RPG game;
 
     if (game.Construct(512, 384, 2, 2)) {
         game.Start();
