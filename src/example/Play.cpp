@@ -1,7 +1,7 @@
 #include "RPG.h"
 #include "Scene.h"
-#include "GameState/Play.h"
-#include "GameState/Play/PlayScene.h"
+#include "example/Play.h"
+#include "example/Play/PlayScene.h"
 
 void Play::Init(Holo::RPG* g) {
     game = g;

@@ -1,5 +1,5 @@
 #include "RPG.h"
-#include "GameState/MainMenu.h"
+#include "example/MainMenu.h"
 
 bool Holo::RPG::OnUserCreate() {
     ReadConfig();
