@@ -3,6 +3,7 @@
 
 #include "RPG.h"
 #include "Engine3D/Math.h"
+#include "Engine3D/GameObject.h"
 
 class Camera;
 class Shader;
