@@ -4,24 +4,20 @@
 #include "Scene.h"
 
 class OptionsScene : public Scene {
-public:
+  public:
     OptionsScene() {}
 
-private:
-    Holo::RPG* game;
-    GameState* state;
+  private:
+    Holo::RPG *game;
+    GameState *state;
 
     std::string sSceneName = "Options";
 
     /* Options */
-    std::vector<std::string> vOptions = {
-        "Back",
-        "Master Volume",
-        "SFX",
-        "Music"
-    };
+    std::vector<std::string> vOptions = { "Back", "Master Volume", "SFX",
+                                          "Music" };
     std::string sOptionsIndicator = "> ";
-    olc::vi2d vOptionsOffset = {50, 0};
+    olc::vi2d vOptionsOffset = { 50, 0 };
     int nOptionSpacing = 15;
     int nOptionSelected = 0;
 
@@ -29,9 +25,9 @@ private:
     float fBarWidth = 50;
     int nValueStep = 10;
 
-public:
+  public:
     /* Core */
-    void Init(Holo::RPG *g, GameState* s);
+    void Init(Holo::RPG *g, GameState *s);
     void Cleanup();
 
     /* Flow */

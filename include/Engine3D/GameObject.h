@@ -12,9 +12,7 @@ struct triangle {
     float d00, d01, d11;
     float denom;
 
-    triangle() {
-        Init();
-    }
+    triangle() { Init(); }
 
     triangle(vec3d p0, vec3d p1, vec3d p2) {
         p[0] = p0;
@@ -24,9 +22,9 @@ struct triangle {
     }
 
     void Init() {
-        a = {p[0].x, p[0].y};
-        b = {p[1].x, p[1].y};
-        c = {p[2].x, p[2].y};
+        a = { p[0].x, p[0].y };
+        b = { p[1].x, p[1].y };
+        c = { p[2].x, p[2].y };
         v0 = b - a, v1 = c - a;
         d00 = vec3d_DotProduct(v0, v0);
         d01 = vec3d_DotProduct(v0, v1);
@@ -73,7 +71,8 @@ struct mesh {
             if (line[0] == 'f') {
                 int f[3];
                 s >> junk >> f[0] >> f[1] >> f[2];
-                tris.push_back({verts[f[0] - 1], verts[f[1] - 1], verts[f[2] - 1]});
+                tris.push_back(
+                    { verts[f[0] - 1], verts[f[1] - 1], verts[f[2] - 1] });
             }
         }
 
@@ -81,12 +80,15 @@ struct mesh {
     }
 };
 
-static int triangle_ClipAgainstPlane(vec3d plane_p, vec3d plane_n, triangle &in_tri, triangle &out_tri1, triangle &out_tri2) {
+static int triangle_ClipAgainstPlane(vec3d plane_p, vec3d plane_n,
+                                     triangle &in_tri, triangle &out_tri1,
+                                     triangle &out_tri2) {
     plane_n = vec3d_Normalise(plane_n);
 
     auto dist = [&](vec3d &p) {
         vec3d n = vec3d_Normalise(p);
-        return (plane_n.x * p.x + plane_n.y * p.y + plane_n.z * p.z - vec3d_DotProduct(plane_n, plane_p));
+        return (plane_n.x * p.x + plane_n.y * p.y + plane_n.z * p.z -
+                vec3d_DotProduct(plane_n, plane_p));
     };
 
     vec3d *inside_points[3];
@@ -123,8 +125,10 @@ static int triangle_ClipAgainstPlane(vec3d plane_p, vec3d plane_n, triangle &in_
         out_tri1.col = in_tri.col;
 
         out_tri1.p[0] = *inside_points[0];
-        out_tri1.p[1] = vec3d_IntersectPlane(plane_p, plane_n, *inside_points[0], *outside_points[0]);
-        out_tri1.p[2] = vec3d_IntersectPlane(plane_p, plane_n, *inside_points[0], *outside_points[1]);
+        out_tri1.p[1] = vec3d_IntersectPlane(
+            plane_p, plane_n, *inside_points[0], *outside_points[0]);
+        out_tri1.p[2] = vec3d_IntersectPlane(
+            plane_p, plane_n, *inside_points[0], *outside_points[1]);
 
         return 1;
     }
@@ -134,11 +138,13 @@ static int triangle_ClipAgainstPlane(vec3d plane_p, vec3d plane_n, triangle &in_
 
         out_tri1.p[0] = *inside_points[0];
         out_tri1.p[1] = *inside_points[1];
-        out_tri1.p[2] = vec3d_IntersectPlane(plane_p, plane_n, *inside_points[0], *outside_points[0]);
+        out_tri1.p[2] = vec3d_IntersectPlane(
+            plane_p, plane_n, *inside_points[0], *outside_points[0]);
 
         out_tri2.p[0] = *inside_points[1];
         out_tri2.p[1] = out_tri1.p[2];
-        out_tri2.p[2] = vec3d_IntersectPlane(plane_p, plane_n, *inside_points[1], *outside_points[0]);
+        out_tri2.p[2] = vec3d_IntersectPlane(
+            plane_p, plane_n, *inside_points[1], *outside_points[0]);
 
         return 2;
     }
@@ -147,16 +153,15 @@ static int triangle_ClipAgainstPlane(vec3d plane_p, vec3d plane_n, triangle &in_
 }
 
 class GameObject {
-public:
+  public:
     GameObject() {}
 
-private:
-
-public:
+  private:
+  public:
     vec3d scale = { 1.0f, 1.0f, 1.0f };
     vec3d rotation = { 0.0f, 0.0f, 0.0f };
     vec3d position = { 0.0f, 0.0f, 0.0f };
-    mesh* _mesh;
+    mesh *_mesh;
     // texture
 };
 

@@ -13,8 +13,7 @@ struct vec3d {
         return { v1.x + v2.x, v1.y + v2.y, v1.z + v2.z };
     }
 
-    vec3d &operator+=(const vec3d &v)
-    {
+    vec3d &operator+=(const vec3d &v) {
         *this = *this + v;
         return *this;
     }
@@ -54,7 +53,9 @@ struct mat4x4 {
         mat4x4 matrix;
         for (int c = 0; c < 4; c++)
             for (int r = 0; r < 4; r++)
-                matrix.m[r][c] = m1.m[r][0] * m2.m[0][c] + m1.m[r][1] * m2.m[1][c] + m1.m[r][2] * m2.m[2][c] + m1.m[r][3] * m2.m[3][c];
+                matrix.m[r][c] =
+                    m1.m[r][0] * m2.m[0][c] + m1.m[r][1] * m2.m[1][c] +
+                    m1.m[r][2] * m2.m[2][c] + m1.m[r][3] * m2.m[3][c];
         return matrix;
     }
 
@@ -65,10 +66,14 @@ struct mat4x4 {
 
     friend vec3d operator*(const mat4x4 &m, const vec3d &i) {
         vec3d v;
-        v.x = i.x * m.m[0][0] + i.y * m.m[1][0] + i.z * m.m[2][0] + i.w * m.m[3][0];
-        v.y = i.x * m.m[0][1] + i.y * m.m[1][1] + i.z * m.m[2][1] + i.w * m.m[3][1];
-        v.z = i.x * m.m[0][2] + i.y * m.m[1][2] + i.z * m.m[2][2] + i.w * m.m[3][2];
-        v.w = i.x * m.m[0][3] + i.y * m.m[1][3] + i.z * m.m[2][3] + i.w * m.m[3][3];
+        v.x = i.x * m.m[0][0] + i.y * m.m[1][0] + i.z * m.m[2][0] +
+              i.w * m.m[3][0];
+        v.y = i.x * m.m[0][1] + i.y * m.m[1][1] + i.z * m.m[2][1] +
+              i.w * m.m[3][1];
+        v.z = i.x * m.m[0][2] + i.y * m.m[1][2] + i.z * m.m[2][2] +
+              i.w * m.m[3][2];
+        v.w = i.x * m.m[0][3] + i.y * m.m[1][3] + i.z * m.m[2][3] +
+              i.w * m.m[3][3];
         return v;
     }
 };
@@ -77,9 +82,7 @@ static float vec3d_DotProduct(vec3d &v1, vec3d &v2) {
     return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
 
-static float vec3d_Length(vec3d &v) {
-    return sqrtf(vec3d_DotProduct(v, v));
-}
+static float vec3d_Length(vec3d &v) { return sqrtf(vec3d_DotProduct(v, v)); }
 
 static vec3d vec3d_Normalise(vec3d &v) {
     float l = vec3d_Length(v);
@@ -94,7 +97,8 @@ static vec3d vec3d_CrossProduct(vec3d &v1, vec3d &v2) {
     return v;
 }
 
-static vec3d vec3d_IntersectPlane(vec3d &plane_p, vec3d &plane_n, vec3d &lineStart, vec3d &lineEnd) {
+static vec3d vec3d_IntersectPlane(vec3d &plane_p, vec3d &plane_n,
+                                  vec3d &lineStart, vec3d &lineEnd) {
     plane_n = vec3d_Normalise(plane_n);
     float plane_d = -vec3d_DotProduct(plane_n, plane_p);
     float ad = vec3d_DotProduct(lineStart, plane_n);
@@ -161,7 +165,8 @@ static mat4x4 mat4x4_MakeRotationZ(float fAngleRad) {
 }
 
 static mat4x4 mat4x4_MakeRotation(float x, float y, float z) {
-    return mat4x4_MakeRotationX(x) * mat4x4_MakeRotationY(y) * mat4x4_MakeRotationY(y);
+    return mat4x4_MakeRotationX(x) * mat4x4_MakeRotationY(y) *
+           mat4x4_MakeRotationY(y);
 }
 
 static mat4x4 mat4x4_MakeRotation(const vec3d &v) {
@@ -184,7 +189,8 @@ static mat4x4 mat4x4_MakeTranslation(const vec3d &v) {
     return mat4x4_MakeTranslation(v.x, v.y, v.z);
 }
 
-static mat4x4 mat4x4_MakeProjection(float fFovDegrees, float fAspectRatio, float fNear, float fFar) {
+static mat4x4 mat4x4_MakeProjection(float fFovDegrees, float fAspectRatio,
+                                    float fNear, float fFar) {
     float fFovRad = 1.0f / tanf(fFovDegrees * 0.5f / 180.0f * 3.14159f);
     mat4x4 matrix;
     matrix.m[0][0] = fAspectRatio * fFovRad;
@@ -240,9 +246,12 @@ static mat4x4 mat4x4_QuickInverse(mat4x4 &m) {
     matrix.m[2][1] = m.m[1][2];
     matrix.m[2][2] = m.m[2][2];
     matrix.m[2][3] = 0.0f;
-    matrix.m[3][0] = -(m.m[3][0] * matrix.m[0][0] + m.m[3][1] * matrix.m[1][0] + m.m[3][2] * matrix.m[2][0]);
-    matrix.m[3][1] = -(m.m[3][0] * matrix.m[0][1] + m.m[3][1] * matrix.m[1][1] + m.m[3][2] * matrix.m[2][1]);
-    matrix.m[3][2] = -(m.m[3][0] * matrix.m[0][2] + m.m[3][1] * matrix.m[1][2] + m.m[3][2] * matrix.m[2][2]);
+    matrix.m[3][0] = -(m.m[3][0] * matrix.m[0][0] + m.m[3][1] * matrix.m[1][0] +
+                       m.m[3][2] * matrix.m[2][0]);
+    matrix.m[3][1] = -(m.m[3][0] * matrix.m[0][1] + m.m[3][1] * matrix.m[1][1] +
+                       m.m[3][2] * matrix.m[2][1]);
+    matrix.m[3][2] = -(m.m[3][0] * matrix.m[0][2] + m.m[3][1] * matrix.m[1][2] +
+                       m.m[3][2] * matrix.m[2][2]);
     matrix.m[3][3] = 1.0f;
     return matrix;
 }

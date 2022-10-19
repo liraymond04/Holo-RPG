@@ -1,15 +1,13 @@
 #include "Engine3D/Engine3D.h"
 #include "Engine3D/Shaders/Shader.h"
 
-void Engine3D::RasterizeTriangle(triangle &t, olc::Pixel p, Shader *shader)
-{
-    int32_t x1 = t.p[0].x, y1 = t.p[0].y, x2 = t.p[1].x, y2 = t.p[1].y, x3 = t.p[2].x, y3 = t.p[2].y;
+void Engine3D::RasterizeTriangle(triangle &t, olc::Pixel p, Shader *shader) {
+    int32_t x1 = t.p[0].x, y1 = t.p[0].y, x2 = t.p[1].x, y2 = t.p[1].y,
+            x3 = t.p[2].x, y3 = t.p[2].y;
 
-    auto drawline = [&](int sx, int ex, int ny)
-    {
+    auto drawline = [&](int sx, int ex, int ny) {
         float u, v, w;
-        for (int i = sx; i <= ex; i++)
-        {
+        for (int i = sx; i <= ex; i++) {
             t.Barycentric(i, ny, u, v, w);
             game->Draw(i, ny, shader->FragmentShader(p, t, u, v, w));
         }
@@ -21,18 +19,15 @@ void Engine3D::RasterizeTriangle(triangle &t, olc::Pixel p, Shader *shader)
     int signx1, signx2, dx1, dy1, dx2, dy2;
     int e1, e2;
     // Sort vertices
-    if (y1 > y2)
-    {
+    if (y1 > y2) {
         std::swap(y1, y2);
         std::swap(x1, x2);
     }
-    if (y1 > y3)
-    {
+    if (y1 > y3) {
         std::swap(y1, y3);
         std::swap(x1, x3);
     }
-    if (y2 > y3)
-    {
+    if (y2 > y3) {
         std::swap(y2, y3);
         std::swap(x2, x3);
     }
@@ -40,32 +35,26 @@ void Engine3D::RasterizeTriangle(triangle &t, olc::Pixel p, Shader *shader)
     t1x = t2x = x1;
     y = y1; // Starting points
     dx1 = (int)(x2 - x1);
-    if (dx1 < 0)
-    {
+    if (dx1 < 0) {
         dx1 = -dx1;
         signx1 = -1;
-    }
-    else
+    } else
         signx1 = 1;
     dy1 = (int)(y2 - y1);
 
     dx2 = (int)(x3 - x1);
-    if (dx2 < 0)
-    {
+    if (dx2 < 0) {
         dx2 = -dx2;
         signx2 = -1;
-    }
-    else
+    } else
         signx2 = 1;
     dy2 = (int)(y3 - y1);
 
-    if (dy1 > dx1)
-    {
+    if (dy1 > dx1) {
         std::swap(dx1, dy1);
         changed1 = true;
     }
-    if (dy2 > dx2)
-    {
+    if (dy2 > dx2) {
         std::swap(dy2, dx2);
         changed2 = true;
     }
@@ -76,27 +65,21 @@ void Engine3D::RasterizeTriangle(triangle &t, olc::Pixel p, Shader *shader)
         goto next;
     e1 = (int)(dx1 >> 1);
 
-    for (int i = 0; i < dx1;)
-    {
+    for (int i = 0; i < dx1;) {
         t1xp = 0;
         t2xp = 0;
-        if (t1x < t2x)
-        {
+        if (t1x < t2x) {
             minx = t1x;
             maxx = t2x;
-        }
-        else
-        {
+        } else {
             minx = t2x;
             maxx = t1x;
         }
         // process first line until y value is about to change
-        while (i < dx1)
-        {
+        while (i < dx1) {
             i++;
             e1 += dy1;
-            while (e1 >= dx1)
-            {
+            while (e1 >= dx1) {
                 e1 -= dx1;
                 if (changed1)
                     t1xp = signx1; // t1x += signx1;
@@ -111,11 +94,9 @@ void Engine3D::RasterizeTriangle(triangle &t, olc::Pixel p, Shader *shader)
         // Move line
     next1:
         // process second line until y value is about to change
-        while (1)
-        {
+        while (1) {
             e2 += dy2;
-            while (e2 >= dx2)
-            {
+            while (e2 >= dx2) {
                 e2 -= dx2;
                 if (changed2)
                     t2xp = signx2; // t2x += signx2;
@@ -136,8 +117,8 @@ void Engine3D::RasterizeTriangle(triangle &t, olc::Pixel p, Shader *shader)
             maxx = t1x;
         if (maxx < t2x)
             maxx = t2x;
-        drawline(minx, maxx, y); // Draw line from min to max points found on the y
-                                 // Now increase y
+        drawline(minx, maxx, y); // Draw line from min to max points found on
+                                 // the y Now increase y
         if (!changed1)
             t1x += signx1;
         t1x += t1xp;
@@ -151,49 +132,38 @@ void Engine3D::RasterizeTriangle(triangle &t, olc::Pixel p, Shader *shader)
 next:
     // Second half
     dx1 = (int)(x3 - x2);
-    if (dx1 < 0)
-    {
+    if (dx1 < 0) {
         dx1 = -dx1;
         signx1 = -1;
-    }
-    else
+    } else
         signx1 = 1;
     dy1 = (int)(y3 - y2);
     t1x = x2;
 
-    if (dy1 > dx1)
-    { // swap values
+    if (dy1 > dx1) { // swap values
         std::swap(dy1, dx1);
         changed1 = true;
-    }
-    else
+    } else
         changed1 = false;
 
     e1 = (int)(dx1 >> 1);
 
-    for (int i = 0; i <= dx1; i++)
-    {
+    for (int i = 0; i <= dx1; i++) {
         t1xp = 0;
         t2xp = 0;
-        if (t1x < t2x)
-        {
+        if (t1x < t2x) {
             minx = t1x;
             maxx = t2x;
-        }
-        else
-        {
+        } else {
             minx = t2x;
             maxx = t1x;
         }
         // process first line until y value is about to change
-        while (i < dx1)
-        {
+        while (i < dx1) {
             e1 += dy1;
-            while (e1 >= dx1)
-            {
+            while (e1 >= dx1) {
                 e1 -= dx1;
-                if (changed1)
-                {
+                if (changed1) {
                     t1xp = signx1;
                     break;
                 } // t1x += signx1;
@@ -209,11 +179,9 @@ next:
         }
     next3:
         // process second line until y value is about to change
-        while (t2x != x3)
-        {
+        while (t2x != x3) {
             e2 += dy2;
-            while (e2 >= dx2)
-            {
+            while (e2 >= dx2) {
                 e2 -= dx2;
                 if (changed2)
                     t2xp = signx2;

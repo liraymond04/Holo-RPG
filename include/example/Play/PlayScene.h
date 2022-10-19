@@ -1,24 +1,24 @@
 #ifndef MAINSCENE_H
 #define MAINSCENE_H
 
-#include "Scene.h"
 #include "Engine3D/Engine3D.h"
+#include "Scene.h"
 
 class PlayScene : public Scene {
-public:
+  public:
     PlayScene() {}
 
-private:
-    Holo::RPG* game;
-    GameState* state;
+  private:
+    Holo::RPG *game;
+    GameState *state;
 
     std::string sSceneName = "Main";
 
     Engine3D e3d;
 
-public:
+  public:
     /* Core */
-    void Init(Holo::RPG *g, GameState* s);
+    void Init(Holo::RPG *g, GameState *s);
     void Cleanup();
 
     /* Flow */

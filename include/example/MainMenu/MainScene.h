@@ -4,31 +4,26 @@
 #include "Scene.h"
 
 class MainScene : public Scene {
-public:
+  public:
     MainScene() {}
 
-private:
-    Holo::RPG* game;
-    GameState* state;
+  private:
+    Holo::RPG *game;
+    GameState *state;
 
     std::string sSceneName = "Main";
 
     /* Options */
-    std::vector<std::string> vOptions = {
-        "Play",
-        "Options",
-        "Tutorial",
-        "Credits",
-        "Quit"
-    };
+    std::vector<std::string> vOptions = { "Play", "Options", "Tutorial",
+                                          "Credits", "Quit" };
     std::string sOptionsIndicator = "> ";
-    olc::vi2d vOptionsOffset = {50, 0};
+    olc::vi2d vOptionsOffset = { 50, 0 };
     int nOptionSpacing = 15;
     int nOptionSelected = 0;
 
-public:
+  public:
     /* Core */
-    void Init(Holo::RPG *g, GameState* s);
+    void Init(Holo::RPG *g, GameState *s);
     void Cleanup();
 
     /* Flow */

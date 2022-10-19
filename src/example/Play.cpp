@@ -1,19 +1,21 @@
+#include "example/Play.h"
 #include "RPG.h"
 #include "Scene.h"
-#include "example/Play.h"
 #include "example/Play/PlayScene.h"
 
-void Play::Init(Holo::RPG* g) {
+void Play::Init(Holo::RPG *g) {
     game = g;
     ChangeScene(new PlayScene);
-    std::cout << sStateName << " state initialized" << "\n";
+    std::cout << sStateName << " state initialized"
+              << "\n";
 }
 
 void Play::Cleanup() {
-    std::cout << sStateName << " state cleanup" << "\n";
+    std::cout << sStateName << " state cleanup"
+              << "\n";
 }
 
-void Play::ChangeScene(Scene* scene) {
+void Play::ChangeScene(Scene *scene) {
     if (!scenes.empty()) {
         scenes.back()->Cleanup();
         scenes.pop_back();
@@ -23,7 +25,7 @@ void Play::ChangeScene(Scene* scene) {
     scenes.back()->Init(game, this);
 }
 
-void Play::PushScene(Scene* scene) {
+void Play::PushScene(Scene *scene) {
     if (!scenes.empty()) {
         scenes.back()->Pause();
     }
@@ -43,41 +45,45 @@ void Play::PopScene() {
     }
 }
 
-Scene* Play::TopScene() {
-    return scenes.back();
-}
+Scene *Play::TopScene() { return scenes.back(); }
 
 void Play::Pause() {
-    std::cout << sStateName << " state paused" << "\n";
+    std::cout << sStateName << " state paused"
+              << "\n";
 }
 
 void Play::Resume() {
-    std::cout << sStateName << " state resumed" << "\n";
+    std::cout << sStateName << " state resumed"
+              << "\n";
 }
 
-bool Play::HandleSceneEmpty(Holo::RPG* game) {
+bool Play::HandleSceneEmpty(Holo::RPG *game) {
     game->PopState();
     return false;
 }
 
 bool Play::HandleEvents(float fElapsedTime) {
-    if (scenes.empty()) return HandleSceneEmpty(game);
+    if (scenes.empty())
+        return HandleSceneEmpty(game);
     return scenes.back()->HandleEvents(fElapsedTime);
 }
 
 bool Play::Update(float fElapsedTime) {
-    if (scenes.empty()) return HandleSceneEmpty(game);
+    if (scenes.empty())
+        return HandleSceneEmpty(game);
     return scenes.back()->Update(fElapsedTime);
 }
 
 bool Play::Draw(float fElapsedTime) {
-    if (scenes.empty()) return HandleSceneEmpty(game);
+    if (scenes.empty())
+        return HandleSceneEmpty(game);
 
     // game->Clear(olc::BLACK);
 
     bool result = true;
-    for (Scene* scene : scenes) {
-        if (!result) break;
+    for (Scene *scene : scenes) {
+        if (!result)
+            break;
         result &= scene->Draw(fElapsedTime);
     }
     return result;
