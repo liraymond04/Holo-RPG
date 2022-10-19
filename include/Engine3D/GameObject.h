@@ -146,4 +146,18 @@ static int triangle_ClipAgainstPlane(vec3d plane_p, vec3d plane_n, triangle &in_
     return 0;
 }
 
+class GameObject {
+public:
+    GameObject() {}
+
+private:
+
+public:
+    vec3d scale = { 1.0f, 1.0f, 1.0f };
+    vec3d rotation = { 0.0f, 0.0f, 0.0f };
+    vec3d position = { 0.0f, 0.0f, 0.0f };
+    mesh* _mesh;
+    // texture
+};
+
 #endif

@@ -11,9 +11,6 @@ public:
 private:
 
 public:
-    Holo::RPG* game;
-    Camera* camera;
-
     void VertexShader(std::vector<triangle>& vecTrianglesToRaster, const triangle &tri, const MVPTransform &mvp) {
         triangle triProjected, triTransformed, triViewed;
 

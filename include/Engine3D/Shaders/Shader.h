@@ -14,6 +14,8 @@ protected:
     Shader () {}
     
 public:
+    Holo::RPG* game;
+    Camera* camera;
     virtual void VertexShader(std::vector<triangle>& vecTrianglesToRaster, const triangle& tri, const MVPTransform& mvp) = 0;
     virtual olc::Pixel FragmentShader(olc::Pixel color, const triangle& tri, float barcoord0, float barcoord1, float barcoord2) = 0;
 };
