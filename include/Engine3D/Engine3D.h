@@ -1,9 +1,9 @@
 #ifndef ENGINE3D_H
 #define ENGINE3D_H
 
-#include "Engine3D/GameObject.h"
-#include "Engine3D/Math.h"
 #include "RPG.h"
+#include "Engine3D/Math.h"
+#include "Engine3D/GameObject.h"
 
 class Camera;
 class Shader;

@@ -1,8 +1,8 @@
 #ifndef MAINSCENE_H
 #define MAINSCENE_H
 
-#include "Engine3D/Engine3D.h"
 #include "Scene.h"
+#include "Engine3D/Engine3D.h"
 
 class PlayScene : public Scene {
   public:

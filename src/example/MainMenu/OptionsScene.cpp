@@ -1,5 +1,5 @@
-#include "example/MainMenu/OptionsScene.h"
 #include "RPG.h"
+#include "example/MainMenu/OptionsScene.h"
 
 void OptionsScene::Init(Holo::RPG *g, GameState *s) {
     game = g;

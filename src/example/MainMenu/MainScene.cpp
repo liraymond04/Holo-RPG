@@ -1,7 +1,7 @@
-#include "example/MainMenu/MainScene.h"
 #include "RPG.h"
-#include "example/MainMenu/OptionsScene.h"
 #include "example/Play.h"
+#include "example/MainMenu/MainScene.h"
+#include "example/MainMenu/OptionsScene.h"
 
 void MainScene::Init(Holo::RPG *g, GameState *s) {
     game = g;

@@ -1,6 +1,6 @@
-#include "example/MainMenu.h"
 #include "RPG.h"
 #include "Scene.h"
+#include "example/MainMenu.h"
 #include "example/MainMenu/MainScene.h"
 
 void MainMenu::Init(Holo::RPG *g) {

@@ -1,8 +1,8 @@
 #ifndef ENGINE3D_CAMERA_H
 #define ENGINE3D_CAMERA_H
 
-#include "Engine3D/Engine3D.h"
 #include "RPG.h"
+#include "Engine3D/Engine3D.h"
 
 class Camera {
   public:

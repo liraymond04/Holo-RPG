@@ -1,18 +1,18 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <iostream>
+#include <string>
 #include <algorithm>
 #include <fstream>
-#include <iostream>
-#include <lib/nlohmann/json.hpp>
 #include <sstream>
-#include <string>
+#include <lib/nlohmann/json.hpp>
 
 using json = nlohmann::ordered_json;
 
-#include "lib/miniaudio.h"
-#include "lib/olcPGEX_SplashScreen.h"
 #include "lib/olcPixelGameEngine.h"
+#include "lib/olcPGEX_SplashScreen.h"
+#include "lib/miniaudio.h"
 
 class GameState;
 

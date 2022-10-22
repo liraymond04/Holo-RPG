@@ -1,6 +1,6 @@
-#include "example/Play.h"
 #include "RPG.h"
 #include "Scene.h"
+#include "example/Play.h"
 #include "example/Play/PlayScene.h"
 
 void Play::Init(Holo::RPG *g) {
