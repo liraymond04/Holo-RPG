@@ -8,8 +8,23 @@ void Engine3D::RasterizeTriangle(triangle &t, olc::Pixel p, Shader *shader) {
     auto drawline = [&](int sx, int ex, int ny) {
         float u, v, w;
         for (int i = sx; i <= ex; i++) {
-            t.Barycentric(i, ny, u, v, w);
-            game->Draw(i, ny, shader->FragmentShader(p, t, u, v, w));
+            t.Barycentric(i, ny, t.p[0], t.p[1], t.p[2], u, v, w);
+            float z = u * t.p[2].z + v * t.p[1].z + w * t.p[0].z;
+            int coord = ny * game->ScreenWidth() + i;
+            // bool within = u >= 0.0f && v >= 0.0f && w >= 0.0f;
+
+            // move normalize to vertex shader
+            auto map = [](float value, float start1, float stop1, float start2,
+                          float stop2) {
+                float outgoing = start2 + (stop2 - start2) * ((value - start1) /
+                                                              (stop1 - start1));
+                return outgoing;
+            };
+            float val = map(z, 0.99f, 1.0f, 255, 0); // normalize
+            if (val > depthBuffer[coord]) {
+                game->Draw(i, ny, shader->FragmentShader(p, t, u, v, w));
+                depthBuffer[coord] = val;
+            }
         }
     };
 

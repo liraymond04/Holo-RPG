@@ -23,9 +23,15 @@ class Engine3D {
     Holo::RPG *game;
 
     std::vector<GameObject *> vRenderBuffer;
+    int bufferSize;
+    float *depthBuffer = nullptr;
 
     GameObject *gameObject;
     mat4x4 matProj;
+    float fFov = 90.0f;
+    float fNear = 0.1f;
+    float fFar = 1000.0f;
+
     float fTheta = 0.0f;
     vec3d vScale = { 1.0f, 1.0f, 1.0f };
 

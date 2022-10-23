@@ -7,39 +7,19 @@ struct triangle {
     vec3d p[3];
     olc::Pixel col;
 
-    vec3d a, b, c;
-    vec3d v0, v1;
-    float d00, d01, d11;
-    float denom;
-
-    triangle() { Init(); }
-
-    triangle(vec3d p0, vec3d p1, vec3d p2) {
-        p[0] = p0;
-        p[1] = p1;
-        p[2] = p2;
-        Init();
-    }
-
-    void Init() {
-        a = { p[0].x, p[0].y };
-        b = { p[1].x, p[1].y };
-        c = { p[2].x, p[2].y };
-        v0 = b - a, v1 = c - a;
-        d00 = vec3d_DotProduct(v0, v0);
-        d01 = vec3d_DotProduct(v0, v1);
-        d11 = vec3d_DotProduct(v1, v1);
-        denom = 1.0f / (d00 * d11 - d01 * d01);
-    }
-
-    void Barycentric(int32_t x0, int32_t y0, float &u, float &v, float &w) {
+    // cache calculations that don't change with a new point
+    void Barycentric(int32_t x0, int32_t y0, vec3d &a, vec3d &b, vec3d &c,
+                     float &u, float &v, float &w) {
         vec3d p = { (float)x0, (float)y0 };
-        vec3d v2 = p - a;
+        vec3d v0 = b - a, v1 = c - a, v2 = p - a;
+        float d00 = vec3d_DotProduct(v0, v0);
+        float d01 = vec3d_DotProduct(v0, v1);
+        float d11 = vec3d_DotProduct(v1, v1);
         float d20 = vec3d_DotProduct(v2, v0);
         float d21 = vec3d_DotProduct(v2, v1);
-
-        v = (d11 * d20 - d01 * d21) * denom;
-        w = (d00 * d21 - d01 * d20) * denom;
+        float denom = d00 * d11 - d01 * d01;
+        v = (d11 * d20 - d01 * d21) / denom;
+        w = (d00 * d21 - d01 * d20) / denom;
         u = 1.0f - v - w;
     }
 };

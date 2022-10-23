@@ -10,12 +10,14 @@ void Engine3D::Init(Holo::RPG *g) {
     m->LoadFromObj("assets/models/mountains.obj");
     gameObject->_mesh = m;
     // load texture
+
     vRenderBuffer.push_back(gameObject);
+    bufferSize = game->ScreenWidth() * game->ScreenHeight();
+    depthBuffer = new float[bufferSize];
 
     camera = new Camera();
     matProj = mat4x4_MakeProjection(
-        90.0f, (float)g->ScreenHeight() / (float)g->ScreenWidth(), 0.1f,
-        1000.0f);
+        fFov, (float)g->ScreenHeight() / (float)g->ScreenWidth(), fNear, fFar);
 
     shader = new SimpleShader;
     shader->camera = camera;
@@ -54,7 +56,6 @@ bool Engine3D::Update(float fElapsedTime) {
                                pow(-1, game->GetKey(olc::CTRL).bHeld);
     }
 
-    // depth buffer
     // lighting system
 
     std::vector<triangle> vecTrianglesToRaster;
@@ -76,14 +77,7 @@ bool Engine3D::Update(float fElapsedTime) {
         }
     }
 
-    // replace z sort with a depth buffer
-    sort(vecTrianglesToRaster.begin(), vecTrianglesToRaster.end(),
-         [](triangle &t1, triangle &t2) {
-             float z1 = (t1.p[0].z + t1.p[1].z + t1.p[2].z) / 3.0f;
-             float z2 = (t2.p[0].z + t2.p[1].z + t2.p[2].z) / 3.0f;
-             return z1 > z2;
-         });
-
+    memset(depthBuffer, 0.0f, sizeof(float) * bufferSize);
     ClipAndRasterize(vecTrianglesToRaster, olc::WHITE, shader);
 
     // Clear Screen
